@@ -1,21 +1,22 @@
-const CACHE_NAME = 'ev-ekonomisi-v1';
+const CACHE_NAME = 'ev-ekonomisi-v2';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
   '/manifest.json',
-  '/src/css/styles.css',
-  '/src/css/components.css',
-  '/src/js/app.js',
-  '/src/js/state.js',
-  '/src/js/db.js',
-  '/src/js/utils/formatters.js',
-  '/src/js/components/Header.js',
-  '/src/js/components/Dashboard.js',
-  '/src/js/components/TransactionModal.js',
-  '/src/js/components/TransactionsList.js',
-  '/src/js/components/CategoriesManager.js',
-  '/src/js/components/HouseholdSettlement.js',
-  '/src/js/components/AnalyticsView.js'
+  '/css/styles.css',
+  '/css/components.css',
+  '/js/app.js',
+  '/js/state.js',
+  '/js/db.js',
+  '/js/utils/formatters.js',
+  '/js/components/Header.js',
+  '/js/components/Dashboard.js',
+  '/js/components/TransactionModal.js',
+  '/js/components/TransactionsList.js',
+  '/js/components/CategoriesManager.js',
+  '/js/components/ProfilesManager.js',
+  '/js/components/AnalyticsView.js',
+  '/js/components/LoginModal.js'
 ];
 
 self.addEventListener('install', (event) => {
@@ -45,7 +46,7 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
   
-  // API çağrılarını öncelikle ağdan dene, ağ yoksa offline yanıtla
+  // API çağrılarını öncelikle ağdan dene
   if (event.request.url.includes('/api/')) {
     event.respondWith(
       fetch(event.request).catch(() => {
@@ -61,7 +62,6 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       if (cachedResponse) {
-        // Arka planda güncelle
         fetch(event.request).then((networkResponse) => {
           if (networkResponse.status === 200) {
             caches.open(CACHE_NAME).then((cache) => cache.put(event.request, networkResponse));

@@ -15,19 +15,20 @@ const requiredFiles = [
   'public/index.html',
   'public/manifest.json',
   'public/sw.js',
-  'src/css/styles.css',
-  'src/css/components.css',
-  'src/js/app.js',
-  'src/js/state.js',
-  'src/js/db.js',
-  'src/js/utils/formatters.js',
-  'src/js/components/Header.js',
-  'src/js/components/Dashboard.js',
-  'src/js/components/TransactionModal.js',
-  'src/js/components/TransactionsList.js',
-  'src/js/components/CategoriesManager.js',
-  'src/js/components/ProfilesManager.js',
-  'src/js/components/AnalyticsView.js'
+  'public/css/styles.css',
+  'public/css/components.css',
+  'public/js/app.js',
+  'public/js/state.js',
+  'public/js/db.js',
+  'public/js/utils/formatters.js',
+  'public/js/components/Header.js',
+  'public/js/components/Dashboard.js',
+  'public/js/components/TransactionModal.js',
+  'public/js/components/TransactionsList.js',
+  'public/js/components/CategoriesManager.js',
+  'public/js/components/ProfilesManager.js',
+  'public/js/components/AnalyticsView.js',
+  'public/js/components/LoginModal.js'
 ];
 
 requiredFiles.forEach(file => {

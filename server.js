@@ -12,7 +12,7 @@ const DB_FILE = path.join(DATA_DIR, 'db.json');
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/src', express.static(path.join(__dirname, 'src')));
+app.use('/src', express.static(path.join(__dirname, 'public')));
 
 // Varsayılan Veritabanı Yapısı
 const defaultData = {
