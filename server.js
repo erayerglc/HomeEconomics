@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
+const supabase = require('./supabase');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -132,11 +133,101 @@ const defaultData = {
 // Simple In-Memory Session Token Storage
 const validSessions = new Set(['demo_persistent_session_token']);
 
+// ============================================================
+// Supabase Bulut Veritabanı Fonksiyonları (Birincil Kaynak)
+// Yerel dosya yalnızca çevrimdışı yedek olarak kullanılır.
+// ============================================================
+
+let globalDbCache = null;
+
+async function readDb() {
+  // 1) Supabase'den oku (birincil kaynak)
+  if (supabase) {
+    try {
+      const { data, error } = await supabase
+        .from('app_state')
+        .select('data')
+        .eq('id', 'household')
+        .single();
+
+      if (!error && data && data.data && Object.keys(data.data).length > 0) {
+        globalDbCache = data.data;
+        return data.data;
+      }
+    } catch (e) {
+      console.warn('Supabase okuma hatası:', e.message);
+    }
+  }
+
+  // 2) Yerel dosya yedek
+  try {
+    initDb();
+    if (fs.existsSync(DB_FILE)) {
+      const fileData = fs.readFileSync(DB_FILE, 'utf8');
+      const parsed = JSON.parse(fileData);
+      globalDbCache = parsed;
+      return parsed;
+    }
+  } catch (err) {
+    console.error('Yerel veritabanı okuma hatası:', err);
+  }
+
+  // 3) Bellek yedek
+  if (globalDbCache) return globalDbCache;
+
+  // 4) Varsayılan veri
+  globalDbCache = defaultData;
+  return defaultData;
+}
+
+async function writeDb(data) {
+  globalDbCache = data;
+
+  // 1) Supabase'e yaz (birincil kaynak)
+  if (supabase) {
+    try {
+      const { error } = await supabase
+        .from('app_state')
+        .upsert({
+          id: 'household',
+          data: data,
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'id' });
+
+      if (error) {
+        console.error('Supabase yazma hatası:', error.message);
+      }
+    } catch (e) {
+      console.error('Supabase bağlantı hatası:', e.message);
+    }
+  }
+
+  // 2) Yerel dosyaya da yaz (yedek)
+  try {
+    initDb();
+    fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf8');
+  } catch (err) {
+    console.error('Yerel dosya yazma hatası:', err);
+  }
+
+  return true;
+}
+
+// Veri klasörünü ve dosyasını oluştur
+function initDb() {
+  if (!fs.existsSync(DATA_DIR)) {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+  }
+  if (!fs.existsSync(DB_FILE)) {
+    fs.writeFileSync(DB_FILE, JSON.stringify(defaultData, null, 2), 'utf8');
+  }
+}
+
 // Auth Endpoints
 
 // Giriş Yap (Login)
-app.post('/api/auth/login', (req, res) => {
-  const db = readDb();
+app.post('/api/auth/login', async (req, res) => {
+  const db = await readDb();
   const { password } = req.body;
   const currentMasterPassword = (db.settings && db.settings.masterPassword) ? db.settings.masterPassword : '1234';
 
@@ -160,125 +251,55 @@ app.post('/api/auth/verify', (req, res) => {
 });
 
 // Şifre Değiştirme
-app.post('/api/auth/change-password', (req, res) => {
-  const db = readDb();
+app.post('/api/auth/change-password', async (req, res) => {
+  const db = await readDb();
   const { currentPassword, newPassword } = req.body;
   const master = (db.settings && db.settings.masterPassword) ? db.settings.masterPassword : '1234';
 
   if (currentPassword === master) {
     db.settings.masterPassword = newPassword;
-    writeDb(db);
+    await writeDb(db);
     res.json({ success: true, message: 'Şifre başarıyla değiştirildi!' });
   } else {
     res.status(400).json({ success: false, message: 'Mevcut şifre hatalı.' });
   }
 });
 
-// Veri klasörünü ve dosyasını oluştur
-function initDb() {
-  if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
-  }
-  if (!fs.existsSync(DB_FILE)) {
-    fs.writeFileSync(DB_FILE, JSON.stringify(defaultData, null, 2), 'utf8');
-  }
-}
-
-let globalDbCache = null;
-
-function readDb() {
-  const kvUrl = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
-  const kvToken = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
-
-  if (kvUrl && kvToken) {
-    fetch(`${kvUrl}/get/he_state`, {
-      headers: { Authorization: `Bearer ${kvToken}` }
-    })
-      .then(r => r.json())
-      .then(json => {
-        if (json && json.result) {
-          const parsed = typeof json.result === 'string' ? JSON.parse(json.result) : json.result;
-          globalDbCache = parsed;
-        }
-      })
-      .catch(e => console.warn('Cloud KV read error:', e));
-  }
-
-  try {
-    initDb();
-    if (fs.existsSync(DB_FILE)) {
-      const data = fs.readFileSync(DB_FILE, 'utf8');
-      const parsed = JSON.parse(data);
-      globalDbCache = parsed;
-      return parsed;
-    }
-  } catch (err) {
-    console.error('Veritabanı okuma hatası:', err);
-  }
-  if (globalDbCache) return globalDbCache;
-  globalDbCache = defaultData;
-  return defaultData;
-}
-
-function writeDb(data) {
-  globalDbCache = data;
-  try {
-    initDb();
-    fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf8');
-  } catch (err) {
-    console.error('Veritabanı yazma hatası:', err);
-  }
-
-  // Vercel KV / Upstash cloud persistence support (100% Free Forever)
-  const kvUrl = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
-  const kvToken = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
-
-  if (kvUrl && kvToken) {
-    fetch(`${kvUrl}/set/he_state`, {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${kvToken}` },
-      body: JSON.stringify(data)
-    }).catch(e => console.warn('Cloud KV write error:', e));
-  }
-
-  return true;
-}
-
 // API Endpointleri
 
 // Tum Durumu Getir
-app.get('/api/state', (req, res) => {
-  const db = readDb();
+app.get('/api/state', async (req, res) => {
+  const db = await readDb();
   res.json({ success: true, data: db });
 });
 
 // Tum Durumu Guncelle (Sync / Import)
-app.post('/api/state', (req, res) => {
+app.post('/api/state', async (req, res) => {
   const newState = req.body;
   if (!newState || typeof newState !== 'object') {
     return res.status(400).json({ success: false, message: 'Geçersiz veri' });
   }
-  writeDb(newState);
+  await writeDb(newState);
   res.json({ success: true, data: newState });
 });
 
 // Islem Ekle
-app.post('/api/transactions', (req, res) => {
-  const db = readDb();
+app.post('/api/transactions', async (req, res) => {
+  const db = await readDb();
   const tx = req.body;
   if (!tx.id) tx.id = 'tx_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
   db.transactions.unshift(tx);
-  writeDb(db);
+  await writeDb(db);
   res.json({ success: true, data: tx });
 });
 
 // Islem Duzenle
-app.put('/api/transactions/:id', (req, res) => {
-  const db = readDb();
+app.put('/api/transactions/:id', async (req, res) => {
+  const db = await readDb();
   const index = db.transactions.findIndex(t => t.id === req.params.id);
   if (index !== -1) {
     db.transactions[index] = { ...db.transactions[index], ...req.body };
-    writeDb(db);
+    await writeDb(db);
     res.json({ success: true, data: db.transactions[index] });
   } else {
     res.status(404).json({ success: false, message: 'İşlem bulunamadı' });
@@ -286,44 +307,44 @@ app.put('/api/transactions/:id', (req, res) => {
 });
 
 // Islem Sil
-app.delete('/api/transactions/:id', (req, res) => {
-  const db = readDb();
+app.delete('/api/transactions/:id', async (req, res) => {
+  const db = await readDb();
   db.transactions = db.transactions.filter(t => t.id !== req.params.id);
-  writeDb(db);
+  await writeDb(db);
   res.json({ success: true, message: 'İşlem silindi' });
 });
 
 // Kategori Ekle
-app.post('/api/categories', (req, res) => {
-  const db = readDb();
+app.post('/api/categories', async (req, res) => {
+  const db = await readDb();
   const cat = req.body;
   if (!cat.id) cat.id = 'cat_custom_' + Date.now();
   db.categories.push(cat);
-  writeDb(db);
+  await writeDb(db);
   res.json({ success: true, data: cat });
 });
 
 // Kategori Sil
-app.delete('/api/categories/:id', (req, res) => {
-  const db = readDb();
+app.delete('/api/categories/:id', async (req, res) => {
+  const db = await readDb();
   db.categories = db.categories.filter(c => c.id !== req.params.id);
-  writeDb(db);
+  await writeDb(db);
   res.json({ success: true, message: 'Kategori silindi' });
 });
 
 // Profilleri Guncelle
-app.post('/api/profiles', (req, res) => {
-  const db = readDb();
+app.post('/api/profiles', async (req, res) => {
+  const db = await readDb();
   db.profiles = req.body.profiles;
-  writeDb(db);
+  await writeDb(db);
   res.json({ success: true, data: db.profiles });
 });
 
 // Ayarlari Guncelle
-app.post('/api/settings', (req, res) => {
-  const db = readDb();
+app.post('/api/settings', async (req, res) => {
+  const db = await readDb();
   db.settings = { ...db.settings, ...req.body };
-  writeDb(db);
+  await writeDb(db);
   res.json({ success: true, data: db.settings });
 });
 
@@ -337,8 +358,10 @@ if (require.main === module || !process.env.VERCEL) {
     console.log(`==================================================`);
     console.log(`🏡 Ev Ekonomisi & Aile Bütçesi Sunucusu Hazır!`);
     console.log(`🌐 Erişim Adresi: http://localhost:${PORT}`);
+    console.log(`📦 Supabase: ${supabase ? '✅ Bağlı' : '❌ Bağlı Değil (SUPABASE_URL/KEY eksik)'}`);
     console.log(`==================================================`);
   });
 }
 
 module.exports = app;
+
