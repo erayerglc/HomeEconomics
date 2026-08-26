@@ -187,6 +187,23 @@ function initDb() {
 let globalDbCache = null;
 
 function readDb() {
+  const kvUrl = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
+  const kvToken = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
+
+  if (kvUrl && kvToken) {
+    fetch(`${kvUrl}/get/he_state`, {
+      headers: { Authorization: `Bearer ${kvToken}` }
+    })
+      .then(r => r.json())
+      .then(json => {
+        if (json && json.result) {
+          const parsed = typeof json.result === 'string' ? JSON.parse(json.result) : json.result;
+          globalDbCache = parsed;
+        }
+      })
+      .catch(e => console.warn('Cloud KV read error:', e));
+  }
+
   try {
     initDb();
     if (fs.existsSync(DB_FILE)) {
@@ -212,11 +229,14 @@ function writeDb(data) {
     console.error('Veritabanı yazma hatası:', err);
   }
 
-  // Vercel KV / Upstash cloud persistence support if env token is attached
-  if (process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN) {
-    fetch(`${process.env.KV_REST_API_URL}/set/he_state`, {
+  // Vercel KV / Upstash cloud persistence support (100% Free Forever)
+  const kvUrl = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
+  const kvToken = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
+
+  if (kvUrl && kvToken) {
+    fetch(`${kvUrl}/set/he_state`, {
       method: 'POST',
-      headers: { Authorization: `Bearer ${process.env.KV_REST_API_TOKEN}` },
+      headers: { Authorization: `Bearer ${kvToken}` },
       body: JSON.stringify(data)
     }).catch(e => console.warn('Cloud KV write error:', e));
   }
