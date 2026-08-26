@@ -13,8 +13,8 @@ export function renderLoginModal(container) {
 
   container.innerHTML = `
     <!-- Tam Ekran Giriş Sayfası -->
-    <div id="loginScreenOverlay" class="modal-overlay ${!isAuthenticated ? 'active' : ''}" style="z-index: 1000; background: var(--bg-primary);">
-      <div class="glass-card animate-fade" style="width: 100%; max-width: 380px; padding: 28px; margin: auto 16px; text-align: center;">
+    <div id="loginScreenOverlay" class="modal-overlay ${!isAuthenticated ? 'active' : ''}" style="z-index: 1000; background: var(--bg-primary); display: flex; align-items: center; justify-content: center; opacity: ${!isAuthenticated ? '1' : '0'}; visibility: ${!isAuthenticated ? 'visible' : 'hidden'};">
+      <div class="glass-card animate-fade" style="width: calc(100% - 32px); max-width: 380px; padding: 28px; text-align: center;">
         <div style="font-size: 3.2rem; margin-bottom: 12px;">🔐</div>
         <h2 class="title-lg" style="margin-bottom: 6px;">Ev Ekonomisi</h2>
         <div class="subtext" style="margin-bottom: 24px;">Aile Bütçenize Erişmek İçin Giriş Yapın</div>
@@ -106,6 +106,8 @@ export function renderLoginModal(container) {
           sessionStorage.setItem(SESSION_KEY, json.token);
         }
         isAuthenticated = true;
+        loginOverlay.style.opacity = '0';
+        loginOverlay.style.visibility = 'hidden';
         loginOverlay.classList.remove('active');
       } else {
         errorMsg.textContent = json.message || 'Hatalı şifre!';
@@ -117,6 +119,8 @@ export function renderLoginModal(container) {
       if (pass === masterPass) {
         localStorage.setItem(SESSION_KEY, 'offline_token');
         isAuthenticated = true;
+        loginOverlay.style.opacity = '0';
+        loginOverlay.style.visibility = 'hidden';
         loginOverlay.classList.remove('active');
       } else {
         errorMsg.textContent = 'Hatalı şifre! (Offline)';
@@ -173,6 +177,8 @@ export function renderLoginModal(container) {
     localStorage.removeItem(SESSION_KEY);
     sessionStorage.removeItem(SESSION_KEY);
     isAuthenticated = false;
+    loginOverlay.style.opacity = '1';
+    loginOverlay.style.visibility = 'visible';
     loginOverlay.classList.add('active');
   };
 }

@@ -17,7 +17,30 @@ class StateStore {
   }
 
   async init() {
-    this.state = await DB.loadState();
+    try {
+      this.state = await DB.loadState();
+    } catch (err) {
+      console.warn('DB load error, fallback to default:', err);
+      this.state = DB.getDefaultData();
+    }
+
+    // Safety Sanitization for stored data
+    if (!this.state || typeof this.state !== 'object') {
+      this.state = DB.getDefaultData();
+    }
+    if (!this.state.profiles || !Array.isArray(this.state.profiles) || this.state.profiles.length === 0) {
+      this.state.profiles = DB.getDefaultData().profiles;
+    }
+    if (!this.state.categories || !Array.isArray(this.state.categories)) {
+      this.state.categories = DB.getDefaultData().categories;
+    }
+    if (!this.state.transactions || !Array.isArray(this.state.transactions)) {
+      this.state.transactions = DB.getDefaultData().transactions;
+    }
+    if (!this.state.settings) {
+      this.state.settings = DB.getDefaultData().settings;
+    }
+
     if (this.state.settings && this.state.settings.isPinEnabled && this.state.settings.pinCode) {
       this.isLocked = true;
     }
