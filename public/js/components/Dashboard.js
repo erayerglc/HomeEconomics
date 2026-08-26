@@ -148,6 +148,7 @@ export function renderDashboard(container) {
         `}
       </div>
 
+      <div style="height: 80px;"></div>
     </div>
   `;
 

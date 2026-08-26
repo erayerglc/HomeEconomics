@@ -184,26 +184,44 @@ function initDb() {
   }
 }
 
+let globalDbCache = null;
+
 function readDb() {
   try {
     initDb();
-    const data = fs.readFileSync(DB_FILE, 'utf8');
-    return JSON.parse(data);
+    if (fs.existsSync(DB_FILE)) {
+      const data = fs.readFileSync(DB_FILE, 'utf8');
+      const parsed = JSON.parse(data);
+      globalDbCache = parsed;
+      return parsed;
+    }
   } catch (err) {
     console.error('Veritabanı okuma hatası:', err);
-    return defaultData;
   }
+  if (globalDbCache) return globalDbCache;
+  globalDbCache = defaultData;
+  return defaultData;
 }
 
 function writeDb(data) {
+  globalDbCache = data;
   try {
     initDb();
     fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf8');
-    return true;
   } catch (err) {
     console.error('Veritabanı yazma hatası:', err);
-    return false;
   }
+
+  // Vercel KV / Upstash cloud persistence support if env token is attached
+  if (process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN) {
+    fetch(`${process.env.KV_REST_API_URL}/set/he_state`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${process.env.KV_REST_API_TOKEN}` },
+      body: JSON.stringify(data)
+    }).catch(e => console.warn('Cloud KV write error:', e));
+  }
+
+  return true;
 }
 
 // API Endpointleri

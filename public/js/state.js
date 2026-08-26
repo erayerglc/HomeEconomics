@@ -44,7 +44,33 @@ class StateStore {
     if (this.state.settings && this.state.settings.isPinEnabled && this.state.settings.pinCode) {
       this.isLocked = true;
     }
+
+    this.startAutoSync();
     this.notify();
+  }
+
+  startAutoSync() {
+    const syncLatest = async () => {
+      if (document.hidden) return;
+      try {
+        const latestState = await DB.loadState();
+        if (latestState && JSON.stringify(latestState) !== JSON.stringify(this.state)) {
+          this.state = latestState;
+          this.notify();
+        }
+      } catch (e) {
+        // Silent catch for background polling
+      }
+    };
+
+    // 5 saniyede bir arka planda senkronize et
+    setInterval(syncLatest, 5000);
+
+    // Sekmeye/Uygulamaya dönüldüğünde anında senkronize et
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) syncLatest();
+    });
+    window.addEventListener('focus', syncLatest);
   }
 
   subscribe(listener) {

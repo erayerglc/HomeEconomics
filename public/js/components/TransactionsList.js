@@ -150,6 +150,7 @@ export function renderTransactionsList(container) {
             }).join('')}
           </div>
         `}
+        <div style="height: 80px;"></div>
       </div>
     `;
 
