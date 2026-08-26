@@ -5,7 +5,8 @@ const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const DATA_DIR = path.join(__dirname, 'data');
+const isVercel = process.env.VERCEL === '1' || process.env.VERCEL;
+const DATA_DIR = isVercel ? '/tmp' : path.join(__dirname, 'data');
 const DB_FILE = path.join(DATA_DIR, 'db.json');
 
 app.use(cors());
@@ -293,9 +294,13 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.listen(PORT, () => {
-  console.log(`==================================================`);
-  console.log(`🏡 Ev Ekonomisi & Aile Bütçesi Sunucusu Hazır!`);
-  console.log(`🌐 Erişim Adresi: http://localhost:${PORT}`);
-  console.log(`==================================================`);
-});
+if (require.main === module || !process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`==================================================`);
+    console.log(`🏡 Ev Ekonomisi & Aile Bütçesi Sunucusu Hazır!`);
+    console.log(`🌐 Erişim Adresi: http://localhost:${PORT}`);
+    console.log(`==================================================`);
+  });
+}
+
+module.exports = app;
