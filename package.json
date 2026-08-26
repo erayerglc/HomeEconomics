@@ -1,0 +1,24 @@
+{
+  "name": "home-economics-pwa",
+  "version": "1.0.0",
+  "description": "Ev Ekonomisi ve Aile Bütçe Takip Uygulaması (Çoklu Kullanıcı & PWA)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "test": "node scripts/test.js"
+  },
+  "keywords": [
+    "budget",
+    "pwa",
+    "home-economics",
+    "multi-user",
+    "household"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2"
+  }
+}
