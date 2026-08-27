@@ -5,7 +5,7 @@ const supabaseUrl = "https://wflecsrbpbbtkdxktufx.supabase.co";
 //const supabaseKey = process.env.SUPABASE_KEY;
 //const supabaseKey = "sb_publishable_OE9SuQq5998hIkROUAbIMQ_R4KvfYwE";
 //const supabaseKey = "sb_secret_kfqULWj999dD3Rd4VVAisQ_jMMSNFFq";
-const supabaseKey = "sb_secret_8oPZb9jYo91RndAGKVmvww_rN2ZAY2I";
+const supabaseKey = "sb_publishable_OE9SuQq5998hIkROUAbIMQ_R4KvfYwE";
 
 
 
