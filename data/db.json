@@ -159,7 +159,7 @@
     {
       "id": "tx_1787748261208_j8zc",
       "type": "outcome",
-      "amount": 20000,
+      "amount": 15000,
       "categoryId": "cat_exp_2",
       "profileId": "user_1",
       "paymentMethod": "Kredi Kartı",
