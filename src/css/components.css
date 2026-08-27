@@ -7,7 +7,7 @@
   position: sticky;
   top: 0;
   z-index: 90;
-  height: var(--header-height);
+  /*height: var(--header-height);*/
   background: rgba(19, 27, 46, 0.85);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -15,7 +15,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 18px;
+  /*padding: 0 18px;*/
+  padding: 48px 18px 8px 18px;
 }
 
 .header-brand {
@@ -273,7 +274,7 @@
   font-size: 0.7rem;
   padding: 2px 8px;
   border-radius: var(--radius-full);
-  background: rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.08);
   color: var(--text-muted);
 }
 
@@ -394,7 +395,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 12px 0;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .settlement-user-row:last-child {
