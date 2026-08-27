@@ -57,8 +57,10 @@ class StateStore {
         if (latestState && JSON.stringify(latestState) !== JSON.stringify(this.state)) {
           this.state = latestState;
           this.notify();
+          console.log('Auto-sync successful');
         }
       } catch (e) {
+        console.warn('Auto-sync error:', e);
         // Silent catch for background polling
       }
     };

@@ -1,11 +1,17 @@
 const { createClient } = require('@supabase/supabase-js');
 
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_KEY;
+//const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseUrl = "https://wflecsrbpbbtkdxktufx.supabase.co";
+//const supabaseKey = process.env.SUPABASE_KEY;
+//const supabaseKey = "sb_publishable_OE9SuQq5998hIkROUAbIMQ_R4KvfYwE";
+const supabaseKey = "sb_secret_kfqULWj999dD3Rd4VVAisQ_jMMSNFFq";
+
 
 let supabase = null;
 
 if (supabaseUrl && supabaseKey) {
+  console.log(supabaseUrl);
+  console.log(supabaseKey);
   supabase = createClient(supabaseUrl, supabaseKey);
   console.log('✅ Supabase bağlantısı kuruldu');
 } else {

@@ -130,6 +130,7 @@ export class DB {
         const json = await res.json();
         if (json.success && json.data) {
           localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(json.data));
+          console.info('Veriler sunucudan başarıyla yüklendi');
           return json.data;
         }
       }

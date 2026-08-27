@@ -4,144 +4,162 @@
       "id": "user_1",
       "name": "ben",
       "role": "Koca",
-      "avatar": "👨‍💼",
-      "color": "#3b82f6"
+      "color": "#3b82f6",
+      "avatar": "👨‍💼"
     },
     {
       "id": "user_2",
-      "name": "eş",
+      "name": "testtest",
       "role": "Hanım",
-      "avatar": "👩‍💼",
-      "color": "#ec4899"
+      "color": "#ec4899",
+      "avatar": "👩‍💼"
     }
   ],
+  "settings": {
+    "pinCode": "",
+    "currency": "₺",
+    "isPinEnabled": false,
+    "activeProfileId": "all",
+    "currencyPosition": "after"
+  },
   "categories": [
     {
       "id": "cat_inc_1",
-      "type": "income",
-      "name": "Maaş",
       "icon": "💵",
+      "name": "Maaş",
+      "type": "income",
       "color": "#10b981",
       "isDefault": true
     },
     {
       "id": "cat_inc_2",
-      "type": "income",
-      "name": "Ek Gelir / Prim",
       "icon": "💼",
+      "name": "Ek Gelir / Prim",
+      "type": "income",
       "color": "#059669",
       "isDefault": true
     },
     {
       "id": "cat_inc_3",
-      "type": "income",
-      "name": "Yatırım / Getiri",
       "icon": "📈",
+      "name": "Yatırım / Getiri",
+      "type": "income",
       "color": "#047857",
       "isDefault": true
     },
     {
       "id": "cat_inc_4",
-      "type": "income",
-      "name": "Diğer Gelirler",
       "icon": "🎁",
+      "name": "Diğer Gelirler",
+      "type": "income",
       "color": "#34d399",
       "isDefault": true
     },
     {
       "id": "cat_exp_1",
-      "type": "outcome",
-      "name": "Kredi Kartı",
       "icon": "💳",
+      "name": "Kredi Kartı",
+      "type": "outcome",
       "color": "#ef4444",
       "isDefault": true
     },
     {
       "id": "cat_exp_2",
-      "type": "outcome",
-      "name": "Kredi / Taksit",
       "icon": "🏦",
+      "name": "Kredi / Taksit",
+      "type": "outcome",
       "color": "#dc2626",
       "isDefault": true
     },
     {
       "id": "cat_exp_3",
-      "type": "outcome",
-      "name": "Nakit Harcama",
       "icon": "💸",
+      "name": "Nakit Harcama",
+      "type": "outcome",
       "color": "#f59e0b",
       "isDefault": true
     },
     {
       "id": "cat_exp_4",
-      "type": "outcome",
-      "name": "Kira & Ev",
       "icon": "🏠",
+      "name": "Kira & Ev",
+      "type": "outcome",
       "color": "#8b5cf6",
       "isDefault": true
     },
     {
       "id": "cat_exp_5",
-      "type": "outcome",
-      "name": "Faturalar",
       "icon": "⚡",
+      "name": "Faturalar",
+      "type": "outcome",
       "color": "#6366f1",
       "isDefault": true
     },
     {
       "id": "cat_exp_6",
-      "type": "outcome",
-      "name": "Market & Mutfak",
       "icon": "🛒",
+      "name": "Market & Mutfak",
+      "type": "outcome",
       "color": "#10b981",
       "isDefault": true
     },
     {
       "id": "cat_exp_7",
-      "type": "outcome",
-      "name": "Dışarıda Yeme & Kahve",
       "icon": "☕",
+      "name": "Dışarıda Yeme & Kahve",
+      "type": "outcome",
       "color": "#d97706",
       "isDefault": true
     },
     {
       "id": "cat_exp_8",
-      "type": "outcome",
-      "name": "Ulaşım & Yakıt",
       "icon": "🚗",
+      "name": "Ulaşım & Yakıt",
+      "type": "outcome",
       "color": "#0284c7",
       "isDefault": true
     },
     {
       "id": "cat_exp_9",
-      "type": "outcome",
-      "name": "Sağlık & Bakım",
       "icon": "💊",
+      "name": "Sağlık & Bakım",
+      "type": "outcome",
       "color": "#ec4899",
       "isDefault": true
     },
     {
       "id": "cat_exp_10",
-      "type": "outcome",
-      "name": "Eğlence & Abonelikler",
       "icon": "🎬",
+      "name": "Eğlence & Abonelikler",
+      "type": "outcome",
       "color": "#a855f7",
       "isDefault": true
     },
     {
       "id": "cat_exp_11",
-      "type": "outcome",
-      "name": "Giyim & Alışveriş",
       "icon": "🛍️",
+      "name": "Giyim & Alışveriş",
+      "type": "outcome",
       "color": "#f43f5e",
       "isDefault": true
     }
   ],
   "transactions": [
     {
+      "id": "tx_1787817777303_krxz",
+      "date": "2026-08-27",
+      "note": "",
+      "type": "income",
+      "amount": 50000,
+      "isShared": true,
+      "profileId": "user_1",
+      "categoryId": "cat_inc_1",
+      "paymentMethod": "Kredi Kartı"
+    },
+    {
       "id": "tx_1787748261208_j8zc",
       "type": "outcome",
-      "amount": 1000,
+      "amount": 20000,
       "categoryId": "cat_exp_2",
       "profileId": "user_1",
       "paymentMethod": "Kredi Kartı",
@@ -151,87 +169,80 @@
     },
     {
       "id": "tx_demo_1",
+      "date": "2026-07-31",
+      "note": "Ağustos Maaşı",
       "type": "income",
       "amount": 45000,
-      "categoryId": "cat_inc_1",
-      "date": "2026-07-31",
+      "isShared": true,
       "profileId": "user_1",
-      "paymentMethod": "Banka Transferi",
-      "note": "Ağustos Maaşı",
-      "isShared": true
+      "categoryId": "cat_inc_1",
+      "paymentMethod": "Banka Transferi"
     },
     {
       "id": "tx_demo_2",
+      "date": "2026-07-31",
+      "note": "Ağustos Maaşı",
       "type": "income",
       "amount": 42000,
-      "categoryId": "cat_inc_1",
-      "date": "2026-07-31",
+      "isShared": true,
       "profileId": "user_2",
-      "paymentMethod": "Banka Transferi",
-      "note": "Ağustos Maaşı",
-      "isShared": true
+      "categoryId": "cat_inc_1",
+      "paymentMethod": "Banka Transferi"
     },
     {
       "id": "tx_demo_3",
+      "date": "2026-08-04",
+      "note": "Ev Kirası",
       "type": "outcome",
       "amount": 14500,
-      "categoryId": "cat_exp_4",
-      "date": "2026-08-04",
+      "isShared": true,
       "profileId": "user_1",
-      "paymentMethod": "Banka Transferi",
-      "note": "Ev Kirası",
-      "isShared": true
+      "categoryId": "cat_exp_4",
+      "paymentMethod": "Banka Transferi"
     },
     {
       "id": "tx_demo_4",
+      "date": "2026-08-11",
+      "note": "Bonus Kart Dönem İçi Harcama",
       "type": "outcome",
       "amount": 18200,
-      "categoryId": "cat_exp_1",
-      "date": "2026-08-11",
+      "isShared": true,
       "profileId": "user_1",
-      "paymentMethod": "Kredi Kartı",
-      "note": "Bonus Kart Dönem İçi Harcama",
-      "isShared": true
+      "categoryId": "cat_exp_1",
+      "paymentMethod": "Kredi Kartı"
     },
     {
       "id": "tx_demo_5",
+      "date": "2026-08-13",
+      "note": "World Kart Ekstre Ödemesi",
       "type": "outcome",
       "amount": 12400,
-      "categoryId": "cat_exp_1",
-      "date": "2026-08-13",
+      "isShared": true,
       "profileId": "user_2",
-      "paymentMethod": "Kredi Kartı",
-      "note": "World Kart Ekstre Ödemesi",
-      "isShared": true
+      "categoryId": "cat_exp_1",
+      "paymentMethod": "Kredi Kartı"
     },
     {
       "id": "tx_demo_6",
+      "date": "2026-08-17",
+      "note": "Haftalık Pazar & Şarküteri",
       "type": "outcome",
       "amount": 3500,
-      "categoryId": "cat_exp_3",
-      "date": "2026-08-17",
+      "isShared": true,
       "profileId": "user_2",
-      "paymentMethod": "Nakit",
-      "note": "Haftalık Pazar & Şarküteri",
-      "isShared": true
+      "categoryId": "cat_exp_3",
+      "paymentMethod": "Nakit"
     },
     {
       "id": "tx_demo_7",
+      "date": "2026-08-19",
+      "note": "İhtiyaç Kredisi 4. Taksit",
       "type": "outcome",
       "amount": 4800,
-      "categoryId": "cat_exp_2",
-      "date": "2026-08-19",
+      "isShared": true,
       "profileId": "user_1",
-      "paymentMethod": "Banka Transferi",
-      "note": "İhtiyaç Kredisi 4. Taksit",
-      "isShared": true
+      "categoryId": "cat_exp_2",
+      "paymentMethod": "Banka Transferi"
     }
-  ],
-  "settings": {
-    "currency": "₺",
-    "currencyPosition": "after",
-    "pinCode": "",
-    "isPinEnabled": false,
-    "activeProfileId": "all"
-  }
+  ]
 }

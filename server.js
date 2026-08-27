@@ -196,6 +196,7 @@ async function writeDb(data) {
 
       if (error) {
         console.error('Supabase yazma hatası:', error.message);
+        console.error('Supabase hatası:', error);
       }
     } catch (e) {
       console.error('Supabase bağlantı hatası:', e.message);
