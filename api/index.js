@@ -365,5 +365,5 @@ app.get('*', (req, res) => {
 // }
 
 // module.exports = app;
-module.exports = require('../server');
+module.exports = require('../server.js');
 
